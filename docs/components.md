@@ -130,7 +130,79 @@ NextAuth `SessionProvider` wrapper used in the root layout to provide session co
 
 **File:** `components/ItemForm.tsx`
 
-*Stub — implementation tracked in Issue #8.*
+A reusable form component for reporting lost and found items. Integrates `PhotoUpload` for AI-powered photo analysis, provides editable fields for title and description (pre-filled by Gemini), and handles form submission to `POST /api/items` with automatic redirect on success.
+
+### Props
+
+```ts
+interface ItemFormProps {
+  type: "lost" | "found";
+}
+```
+
+| Prop   | Type     | Description                                                                     |
+|--------|----------|---------------------------------------------------------------------------------|
+| `type` | `string` | `"lost"` or `"found"` — controls conditional fields, button color, and labels   |
+
+### Usage
+
+```tsx
+import ItemForm from "@/components/ItemForm";
+
+// On the Report Found page
+export default function ReportFoundPage() {
+  return (
+    <div className="max-w-xl mx-auto p-6">
+      <h1>Report a Found Item</h1>
+      <ItemForm type="found" />
+    </div>
+  );
+}
+```
+
+### Fields
+
+| Field       | Type      | Required    | Description                                                      |
+|-------------|-----------|-------------|------------------------------------------------------------------|
+| Photo       | File      | Found: yes, Lost: no | Drag-and-drop or click upload via `PhotoUpload` component |
+| Title       | Text      | Yes         | Pre-filled by Gemini AI if photo uploaded, editable by user      |
+| Description | Textarea  | Yes         | Pre-filled by Gemini AI if photo uploaded, editable by user      |
+| Location    | Select    | Yes         | Dropdown of campus landmarks with "Other" free-text option       |
+| Taken       | Toggle    | Found only  | "I took it with me" / "I left it at the location"               |
+| Reward      | Text      | Lost only   | Optional reward offered for return                               |
+
+### Campus Locations
+
+The location dropdown includes these predefined options plus an "Other" free-text option:
+
+Student Union, Main Library, Science Building, Engineering Hall, Recreation Center, Dining Hall, Parking Garage A, Parking Garage B, Arts Building, Business School, Health Center, Residence Halls, Athletic Fields, Campus Bookstore.
+
+### Behavior
+
+1. **Photo Upload** — The `PhotoUpload` component handles drag-and-drop, compression, and AI generation. When Gemini returns results, the title, description, and extracted attributes are auto-filled with an "AI-suggested" hint.
+2. **AI Pre-fill** — Title and description show a green "AI-suggested — edit if needed" hint when populated by Gemini. Users can freely edit these fields.
+3. **Location Selection** — A dropdown of common campus landmarks. Selecting "Other" reveals a free-text input field.
+4. **Conditional Fields** — Found items show a taken/left toggle. Lost items show an optional reward field.
+5. **Validation** — Title, description, and location are required. The submit button is disabled until all required fields are filled.
+6. **Submission** — Sends `multipart/form-data` to `POST /api/items` with all fields including the photo file and extracted attributes JSON. A loading spinner shows "Submitting & finding matches..." during the request.
+7. **Redirect** — On success, navigates to `/items/{id}` (the item detail page) using Next.js router.
+8. **Error Handling** — API errors are displayed in a red banner above the submit button. The form remains editable so the user can retry.
+
+### Conditional Rendering by Type
+
+| Feature          | `type="found"`                               | `type="lost"`                         |
+|------------------|----------------------------------------------|---------------------------------------|
+| Photo            | Required                                     | Optional (helps finders confirm)      |
+| Taken toggle     | Shown — "I took it with me" / "I left it"   | Hidden                                |
+| Reward field     | Hidden                                       | Shown — optional text                 |
+| Submit button    | Green — "Report Found Item"                  | Red — "Report Lost Item"              |
+| Location prompt  | "Where did you find it?"                     | "Where did you lose it?"              |
+
+### Dependencies
+
+- [`PhotoUpload`](#photoupload) — Photo upload with compression and AI generation
+- `POST /api/items` — Item creation endpoint (see [api.md](./api.md))
+- `next/navigation` — `useRouter` for post-submission redirect
 
 ---
 
