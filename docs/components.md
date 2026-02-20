@@ -122,7 +122,49 @@ NextAuth `SessionProvider` wrapper used in the root layout to provide session co
 
 **File:** `components/ItemCard.tsx`
 
-*Stub — implementation tracked in Issue #8.*
+A clickable card component for displaying an item summary in a grid layout. Used on the My Items dashboard page.
+
+### Props
+
+```ts
+interface ItemCardProps {
+  item: ItemWithMatchCount;
+}
+```
+
+| Prop   | Type                | Description                                              |
+|--------|---------------------|----------------------------------------------------------|
+| `item` | `ItemWithMatchCount` | Item object including `match_count` from the API        |
+
+### Usage
+
+```tsx
+import ItemCard from "@/components/ItemCard";
+
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  {items.map((item) => (
+    <ItemCard key={item.id} item={item} />
+  ))}
+</div>
+```
+
+### Displayed Information
+
+| Element              | Description                                                       |
+|----------------------|-------------------------------------------------------------------|
+| Thumbnail            | Item photo via `next/image`, or a placeholder icon if no photo    |
+| Type badge           | Red "lost" or green "found" pill                                  |
+| Resolved badge       | Blue "resolved" pill, shown only when `item.resolved` is true     |
+| Match count badge    | Yellow pill with count, shown only when `match_count > 0`         |
+| Title                | Item title, truncated to one line                                 |
+| Description preview  | First two lines of the description (`line-clamp-2`)               |
+| Location             | Item location, truncated                                          |
+| Date                 | Short-format creation date (e.g. "Feb 20")                        |
+
+### Behavior
+
+- The entire card is wrapped in a `<Link>` to `/items/{id}` (the item detail page).
+- Hover state adds a subtle shadow (`hover:shadow-md`).
 
 ---
 
@@ -210,4 +252,28 @@ Student Union, Main Library, Science Building, Engineering Hall, Recreation Cent
 
 **File:** `components/MatchCard.tsx`
 
-*Stub — implementation tracked in Issue #8.*
+A card component for displaying a potential match between a lost and found item. Used on the item detail page.
+
+### Props
+
+```ts
+interface MatchCardProps {
+  match: MatchWithDetails;
+  currentItemPhotoUrl: string | null;
+}
+```
+
+| Prop                  | Type               | Description                                           |
+|-----------------------|--------------------|-------------------------------------------------------|
+| `match`               | `MatchWithDetails` | Match object with related item and user details       |
+| `currentItemPhotoUrl` | `string \| null`   | Photo URL of the item being viewed, for side-by-side  |
+
+### Displayed Information
+
+| Element            | Description                                                     |
+|--------------------|-----------------------------------------------------------------|
+| Photo comparison   | Side-by-side photos of "Your item" and "Matched item"           |
+| Match confidence   | Score bar with percentage — green (≥75%), yellow (≥50%), orange  |
+| Matched item info  | Title and location of the matched item                          |
+| AI reasoning       | Gemini's explanation for why the items match                    |
+| Contact info       | Matched user's avatar, name, email link, and phone if available |
