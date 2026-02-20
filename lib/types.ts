@@ -52,13 +52,21 @@ export interface Match {
   created_at: Date;
 }
 
-export interface ItemWithMatches extends Item {
-  matches: MatchWithItem[];
+export interface ItemWithUser extends Item {
+  user: User;
 }
 
-export interface MatchWithItem extends Match {
+export interface ItemWithMatchCount extends Item {
+  match_count: number;
+}
+
+export interface MatchWithDetails extends Match {
   item: Item;
-  user?: User;
+  user: User;
+}
+
+export interface ItemWithMatches extends Item {
+  matches: MatchWithDetails[];
 }
 
 export interface GenerateResponse {
