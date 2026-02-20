@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import ItemForm from "@/components/ItemForm";
 import type { Metadata } from "next";
 
@@ -13,7 +14,7 @@ export default function ReportFoundPage() {
         href="/"
         className="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-flex items-center min-h-[44px]"
       >
-        &larr; Back
+        <ArrowLeft className="w-4 h-4 mr-1" /> Back
       </Link>
       <h1 className="text-xl sm:text-2xl font-bold text-ua-blue">Report Found Item</h1>
       <p className="text-gray-500 mt-1 mb-6 sm:mb-8 text-sm sm:text-base">

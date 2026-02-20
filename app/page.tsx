@@ -2,6 +2,7 @@
 
 import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
+import { Camera, Bot, PartyPopper } from "lucide-react";
 
 export default function Home() {
   const { status } = useSession();
@@ -34,14 +35,14 @@ export default function Home() {
             onClick={handleCTA("/report/lost")}
             className="bg-ua-red hover:bg-ua-chili text-white font-semibold py-3 px-8 rounded-lg transition-colors text-center min-h-[44px] flex items-center justify-center"
           >
-            I Lost Something
+            I Am a Loser
           </Link>
           <Link
             href="/report/found"
             onClick={handleCTA("/report/found")}
             className="bg-ua-leaf hover:bg-ua-river text-white font-semibold py-3 px-8 rounded-lg transition-colors text-center min-h-[44px] flex items-center justify-center"
           >
-            I Found Something
+            I Am a Finder
           </Link>
         </div>
 
@@ -60,7 +61,7 @@ export default function Home() {
           </h2>
           <div className="grid sm:grid-cols-3 gap-6 sm:gap-8 text-center">
             <div>
-              <div className="text-3xl mb-3">📸</div>
+              <div className="text-3xl mb-3"><Camera className="w-8 h-8 mx-auto text-ua-blue" /></div>
               <h3 className="font-semibold mb-1 text-ua-blue">1. Report</h3>
               <p className="text-sm text-gray-600">
                 Upload a photo or describe the item. AI fills in the details for
@@ -68,7 +69,7 @@ export default function Home() {
               </p>
             </div>
             <div>
-              <div className="text-3xl mb-3">🤖</div>
+              <div className="text-3xl mb-3"><Bot className="w-8 h-8 mx-auto text-ua-blue" /></div>
               <h3 className="font-semibold mb-1 text-ua-blue">2. Match</h3>
               <p className="text-sm text-gray-600">
                 Gemini compares attributes like color, brand, and condition to
@@ -76,7 +77,7 @@ export default function Home() {
               </p>
             </div>
             <div>
-              <div className="text-3xl mb-3">🎉</div>
+              <div className="text-3xl mb-3"><PartyPopper className="w-8 h-8 mx-auto text-ua-blue" /></div>
               <h3 className="font-semibold mb-1 text-ua-blue">3. Reunite</h3>
               <p className="text-sm text-gray-600">
                 Get notified when a match is found and connect with the other

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Package } from "lucide-react";
 import { ItemWithMatchCount } from "@/lib/types";
 
 interface ItemCardProps {
@@ -28,7 +29,7 @@ export default function ItemCard({ item }: ItemCardProps) {
         </div>
       ) : (
         <div className="w-full aspect-video bg-gray-100 flex items-center justify-center">
-          <span className="text-gray-300 text-4xl">📦</span>
+          <Package className="w-10 h-10 text-gray-300" />
         </div>
       )}
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { ClipboardList, ArrowLeft } from "lucide-react";
 import ItemCard from "@/components/ItemCard";
 import { ItemWithMatchCount } from "@/lib/types";
 
@@ -61,7 +62,7 @@ export default function MyItemsPage() {
     return (
       <div className="max-w-5xl mx-auto py-6 sm:py-8 px-4">
         <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-block min-h-[44px] flex items-center">
-          &larr; Back
+          <ArrowLeft className="w-4 h-4 mr-1" /> Back
         </Link>
         <div className="bg-red-50 text-red-700 p-4 rounded-lg">
           <p>{error}</p>
@@ -116,7 +117,7 @@ export default function MyItemsPage() {
       {/* Items grid or empty state */}
       {items.length === 0 ? (
         <div className="bg-gray-50 rounded-xl p-8 sm:p-12 text-center">
-          <p className="text-gray-400 text-4xl mb-4">📋</p>
+          <div className="text-gray-400 mb-4 flex justify-center"><ClipboardList className="w-10 h-10" /></div>
           <h2 className="text-lg font-semibold text-gray-700 mb-2">No items yet</h2>
           <p className="text-gray-500 mb-6">
             Report a lost or found item to get started. We&apos;ll automatically match it with potential matches.
