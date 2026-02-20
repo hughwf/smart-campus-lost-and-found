@@ -242,12 +242,12 @@ Only include candidates with score > 0.3. Sort by score descending.
 
 ## Features — MVP (must ship)
 
-- [ ] Google OAuth sign-in
-- [ ] Photo upload with client-side image compression before upload
-- [ ] Gemini title/description generation from photo (editable)
-- [ ] Report found item (photo, title, description, location, taken/left, date)
-- [ ] Report lost item (optional photo, title, description, location, optional reward)
-- [ ] Automatic matching on new item upload
+- [x] Google OAuth sign-in
+- [x] Photo upload with client-side image compression before upload
+- [x] Gemini title/description generation from photo (editable)
+- [x] Report found item (photo, title, description, location, taken/left, date)
+- [x] Report lost item (optional photo, title, description, location, optional reward)
+- [x] Automatic matching on new item upload
 - [ ] Match display with score, reasoning, and contact info (finder's view)
 - [ ] My Items dashboard
 - [ ] Mobile-responsive layout
