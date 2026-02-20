@@ -114,6 +114,36 @@ Photo upload
   → Response: item + matches
 ```
 
+### Viewing Items
+
+```
+GET /api/items/mine
+  → Authenticate user from session
+  → Query items by user_id with match counts
+  → Return items sorted by most recent
+```
+
+### Item Detail
+
+```
+GET /api/items/:id
+  → Authenticate user from session
+  → Fetch item with owner info
+  → Fetch all matches with related items and users
+  → Return item + matches (sorted by score)
+```
+
+### Resolving an Item
+
+```
+POST /api/items/:id/resolve
+  → Authenticate user from session
+  → Verify item exists
+  → Verify user owns the item
+  → Set resolved = true
+  → Item excluded from future matching
+```
+
 ## Environment Variables
 
 | Variable              | Purpose                    |

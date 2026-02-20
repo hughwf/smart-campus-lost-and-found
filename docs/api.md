@@ -110,25 +110,164 @@ Create a new lost or found item. Automatically triggers Gemini semantic matching
 
 ## `GET /api/items/mine`
 
-List the current user's items with match counts.
+List the current user's items with match counts, sorted by most recent.
 
-**Status:** Not yet implemented.
+### Request
+
+No parameters required. The user is identified from the session.
+
+### Response `200 OK`
+
+```json
+{
+  "items": [
+    {
+      "id": "uuid",
+      "user_id": "uuid",
+      "type": "lost",
+      "title": "Blue Stanley Cup",
+      "photo_url": "https://...",
+      "description": "A blue 40oz Stanley tumbler...",
+      "location": "Science Building Room 201",
+      "extracted": { "category": "water_bottle", "..." : "..." },
+      "taken": null,
+      "reward": "$10",
+      "resolved": false,
+      "created_at": "2026-02-20T12:00:00.000Z",
+      "match_count": 2
+    }
+  ]
+}
+```
+
+### Error Responses
+
+| Status | Body | Description |
+|--------|------|-------------|
+| 401 | `{ "error": "Unauthorized" }` | Not signed in |
+| 500 | `{ "error": "Failed to fetch items" }` | Server error |
+
+### Notes
+
+- Returns all items for the current user (both lost and found, resolved and unresolved).
+- Each item includes a `match_count` field with the total number of matches.
+- Items are sorted by `created_at` descending (most recent first).
 
 ---
 
 ## `GET /api/items/:id`
 
-Get a single item with its matches and related user info.
+Get a single item with its matches and related user/item info.
 
-**Status:** Not yet implemented.
+### Request
+
+| Parameter | Type   | Location | Description |
+|-----------|--------|----------|-------------|
+| `id`      | UUID   | Path     | Item ID     |
+
+### Response `200 OK`
+
+```json
+{
+  "item": {
+    "id": "uuid",
+    "user_id": "uuid",
+    "type": "found",
+    "title": "Blue Stanley Cup",
+    "photo_url": "https://...",
+    "description": "A blue 40oz Stanley tumbler...",
+    "location": "Science Building Room 201",
+    "extracted": { "category": "water_bottle", "..." : "..." },
+    "taken": false,
+    "reward": null,
+    "resolved": false,
+    "created_at": "2026-02-20T12:00:00.000Z",
+    "user": {
+      "id": "uuid",
+      "email": "user@example.com",
+      "name": "Jane Doe",
+      "phone": null,
+      "image": "https://...",
+      "created_at": "2026-02-20T10:00:00.000Z"
+    }
+  },
+  "matches": [
+    {
+      "id": "uuid",
+      "lost_item_id": "uuid",
+      "found_item_id": "uuid",
+      "score": 0.85,
+      "reasoning": "Same brand, color, and location...",
+      "created_at": "2026-02-20T12:05:00.000Z",
+      "item": {
+        "id": "uuid",
+        "type": "lost",
+        "title": "Lost Stanley Tumbler",
+        "..." : "..."
+      },
+      "user": {
+        "id": "uuid",
+        "email": "other@example.com",
+        "name": "John Smith",
+        "phone": null,
+        "image": "https://...",
+        "created_at": "2026-02-20T09:00:00.000Z"
+      }
+    }
+  ]
+}
+```
+
+### Error Responses
+
+| Status | Body | Description |
+|--------|------|-------------|
+| 401 | `{ "error": "Unauthorized" }` | Not signed in |
+| 404 | `{ "error": "Item not found" }` | No item with that ID |
+| 500 | `{ "error": "Failed to fetch item" }` | Server error |
+
+### Notes
+
+- The `item` object includes the owner's `user` info (for contact purposes).
+- Each match includes the related `item` (the opposite-type item) and its owner `user` info.
+- Matches are sorted by `score` descending (best match first).
+- Any authenticated user can view any item — access is not restricted to the item owner.
 
 ---
 
 ## `POST /api/items/:id/resolve`
 
-Mark an item as resolved (reunited with owner).
+Mark an item as resolved (reunited with owner). Only the item owner can resolve their items.
 
-**Status:** Not yet implemented.
+### Request
+
+| Parameter | Type   | Location | Description |
+|-----------|--------|----------|-------------|
+| `id`      | UUID   | Path     | Item ID     |
+
+No request body is required.
+
+### Response `200 OK`
+
+```json
+{ "success": true }
+```
+
+### Error Responses
+
+| Status | Body | Description |
+|--------|------|-------------|
+| 400 | `{ "error": "Item is already resolved" }` | Item was already resolved |
+| 401 | `{ "error": "Unauthorized" }` | Not signed in |
+| 403 | `{ "error": "You can only resolve your own items" }` | Not the item owner |
+| 404 | `{ "error": "Item not found" }` | No item with that ID |
+| 500 | `{ "error": "Failed to resolve item" }` | Server error |
+
+### Notes
+
+- Only the item owner (the user who created it) can mark it as resolved.
+- Resolving an item sets `resolved = true` in the database.
+- Resolved items are excluded from future matching queries (`getUnresolvedItemsByType`).
 
 ---
 
