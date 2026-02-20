@@ -61,7 +61,7 @@ lib/                           # Shared server-side code
 components/                    # React components
 ├── Header.tsx                 # Navigation + auth
 ├── Providers.tsx              # NextAuth SessionProvider
-├── PhotoUpload.tsx            # Photo upload widget
+├── PhotoUpload.tsx            # Photo upload with compression + AI generation
 ├── ItemCard.tsx               # Item list card
 ├── ItemForm.tsx               # Report item form
 └── MatchCard.tsx              # Match display card
@@ -91,7 +91,7 @@ Query helpers are in `lib/db.ts`. See [api.md](./api.md) for endpoint details.
 
 ## AI Pipeline
 
-Two Gemini-powered features (see [gemini-integration.md](./gemini-integration.md)):
+Two Gemini-powered features (see [gemini-integration.md](./gemini-integration.md), [components.md](./components.md)):
 
 1. **Generation** — Photo upload triggers `generateTitleAndDescription()`, which returns a suggested title, description, and structured `extracted` attributes. The user reviews and edits before submitting.
 
@@ -102,11 +102,15 @@ Two Gemini-powered features (see [gemini-integration.md](./gemini-integration.md
 ### Reporting an Item
 
 ```
-Photo upload
-  → POST /api/items/generate
+PhotoUpload component (client)
+  → User drops/selects photo
+  → browser-image-compression compresses to ~500KB
+  → onPhotoSelected(compressedFile) callback fires
+  → POST /api/items/generate (compressed photo + type)
   → Gemini extracts title, description, attributes
+  → onGenerated(data) callback populates form fields
   → User reviews/edits in form
-  → POST /api/items
+  → POST /api/items (form data + photo)
   → Photo saved to Vercel Blob
   → Item saved to Postgres
   → matchItems() runs against opposite-type items
