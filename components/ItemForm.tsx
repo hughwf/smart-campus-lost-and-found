@@ -121,7 +121,7 @@ export default function ItemForm({ type }: ItemFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* Photo Upload */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -156,10 +156,10 @@ export default function ItemForm({ type }: ItemFormProps) {
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g. Blue Stanley Cup"
           required
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-ua-oasis focus:border-transparent"
         />
         {aiGenerated && title && (
-          <p className="mt-1 text-xs text-green-600">
+          <p className="mt-1 text-xs text-ua-leaf">
             AI-suggested — edit if needed
           </p>
         )}
@@ -180,10 +180,10 @@ export default function ItemForm({ type }: ItemFormProps) {
           placeholder="Describe the item — color, brand, distinguishing features..."
           required
           rows={3}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-ua-oasis focus:border-transparent resize-vertical"
         />
         {aiGenerated && description && (
-          <p className="mt-1 text-xs text-green-600">
+          <p className="mt-1 text-xs text-ua-leaf">
             AI-suggested — edit if needed
           </p>
         )}
@@ -202,7 +202,7 @@ export default function ItemForm({ type }: ItemFormProps) {
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           required
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-ua-oasis focus:border-transparent bg-white"
         >
           <option value="" disabled>
             {type === "lost"
@@ -223,7 +223,7 @@ export default function ItemForm({ type }: ItemFormProps) {
             onChange={(e) => setCustomLocation(e.target.value)}
             placeholder="Enter the location"
             required
-            className="mt-2 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="mt-2 w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-ua-oasis focus:border-transparent"
           />
         )}
       </div>
@@ -238,9 +238,9 @@ export default function ItemForm({ type }: ItemFormProps) {
             <button
               type="button"
               onClick={() => setTaken(true)}
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium border transition-colors ${
+              className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-medium border transition-colors min-h-[44px] ${
                 taken
-                  ? "bg-green-50 border-green-500 text-green-700"
+                  ? "bg-green-50 border-ua-leaf text-ua-leaf"
                   : "border-gray-300 text-gray-600 hover:border-gray-400"
               }`}
             >
@@ -249,13 +249,13 @@ export default function ItemForm({ type }: ItemFormProps) {
             <button
               type="button"
               onClick={() => setTaken(false)}
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium border transition-colors ${
+              className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-medium border transition-colors min-h-[44px] ${
                 !taken
-                  ? "bg-amber-50 border-amber-500 text-amber-700"
+                  ? "bg-amber-50 border-ua-mesa text-ua-mesa"
                   : "border-gray-300 text-gray-600 hover:border-gray-400"
               }`}
             >
-              I left it at the location
+              I left it there
             </button>
           </div>
         </div>
@@ -276,7 +276,7 @@ export default function ItemForm({ type }: ItemFormProps) {
             value={reward}
             onChange={(e) => setReward(e.target.value)}
             placeholder='e.g. "$10 Starbucks gift card"'
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-ua-oasis focus:border-transparent"
           />
         </div>
       )}
@@ -292,10 +292,10 @@ export default function ItemForm({ type }: ItemFormProps) {
       <button
         type="submit"
         disabled={!isValid || submitting}
-        className={`w-full py-3 px-4 rounded-lg text-sm font-semibold text-white transition-colors ${
+        className={`w-full py-3 px-4 rounded-lg text-sm font-semibold text-white transition-colors min-h-[48px] ${
           type === "lost"
-            ? "bg-red-500 hover:bg-red-600 disabled:bg-red-300"
-            : "bg-green-500 hover:bg-green-600 disabled:bg-green-300"
+            ? "bg-ua-red hover:bg-ua-chili disabled:bg-ua-red/50"
+            : "bg-ua-leaf hover:bg-ua-river disabled:bg-ua-leaf/50"
         } disabled:cursor-not-allowed`}
       >
         {submitting ? (

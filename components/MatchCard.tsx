@@ -12,7 +12,7 @@ function ScoreBar({ score }: { score: number }) {
   const pct = Math.round(score * 100);
   const color =
     pct >= 75
-      ? "bg-green-500"
+      ? "bg-ua-leaf"
       : pct >= 50
         ? "bg-yellow-500"
         : "bg-orange-500";
@@ -39,12 +39,12 @@ export default function MatchCard({
   const { item: matchedItem, user: matchedUser, score, reasoning } = match;
 
   return (
-    <div className="border border-gray-200 rounded-xl p-5 space-y-4 bg-white shadow-sm">
-      {/* Photos side-by-side */}
+    <div className="border border-gray-200 rounded-xl p-4 sm:p-5 space-y-4 bg-white shadow-sm">
+      {/* Photos — stack on mobile, side-by-side on sm+ */}
       {(currentItemPhotoUrl || matchedItem.photo_url) && (
-        <div className="flex gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {currentItemPhotoUrl && (
-            <div className="flex-1">
+            <div>
               <p className="text-xs text-gray-500 mb-1">Your item</p>
               <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
                 <Image
@@ -57,7 +57,7 @@ export default function MatchCard({
             </div>
           )}
           {matchedItem.photo_url && (
-            <div className="flex-1">
+            <div>
               <p className="text-xs text-gray-500 mb-1">Matched item</p>
               <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
                 <Image
@@ -104,16 +104,16 @@ export default function MatchCard({
               alt={matchedUser.name ?? "User"}
               width={32}
               height={32}
-              className="rounded-full"
+              className="rounded-full shrink-0"
             />
           )}
-          <div className="text-sm">
+          <div className="text-sm min-w-0">
             {matchedUser.name && (
               <p className="font-medium text-gray-900">{matchedUser.name}</p>
             )}
             <a
               href={`mailto:${matchedUser.email}`}
-              className="text-blue-600 hover:underline"
+              className="text-ua-oasis hover:underline break-all"
             >
               {matchedUser.email}
             </a>

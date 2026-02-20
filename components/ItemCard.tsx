@@ -14,7 +14,7 @@ export default function ItemCard({ item }: ItemCardProps) {
   return (
     <Link
       href={`/items/${item.id}`}
-      className="block border border-gray-200 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+      className="block border border-gray-200 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden active:scale-[0.98]"
     >
       {/* Thumbnail */}
       {item.photo_url ? (
@@ -32,25 +32,25 @@ export default function ItemCard({ item }: ItemCardProps) {
         </div>
       )}
 
-      <div className="p-4 space-y-2">
+      <div className="p-3 sm:p-4 space-y-2">
         {/* Badges row */}
         <div className="flex items-center gap-2 flex-wrap">
           <span
             className={`text-xs font-semibold uppercase px-2 py-0.5 rounded-full ${
               isFound
-                ? "bg-green-100 text-green-700"
-                : "bg-red-100 text-red-700"
+                ? "bg-green-50 text-ua-leaf"
+                : "bg-red-50 text-ua-red"
             }`}
           >
             {item.type}
           </span>
           {item.resolved && (
-            <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+            <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded-full bg-blue-100 text-ua-azurite">
               Resolved
             </span>
           )}
           {item.match_count > 0 && (
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-orange-50 text-ua-mesa">
               {item.match_count} {item.match_count === 1 ? "match" : "matches"}
             </span>
           )}

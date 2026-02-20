@@ -1,17 +1,22 @@
 import Link from "next/link";
 import ItemForm from "@/components/ItemForm";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Report Found Item",
+};
 
 export default function ReportFoundPage() {
   return (
-    <div className="max-w-2xl mx-auto py-8 px-4">
+    <div className="max-w-2xl mx-auto py-6 sm:py-8 px-4">
       <Link
         href="/"
-        className="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-block"
+        className="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-flex items-center min-h-[44px]"
       >
         &larr; Back
       </Link>
-      <h1 className="text-2xl font-bold">Report Found Item</h1>
-      <p className="text-gray-500 mt-1 mb-8">
+      <h1 className="text-xl sm:text-2xl font-bold text-ua-blue">Report Found Item</h1>
+      <p className="text-gray-500 mt-1 mb-6 sm:mb-8 text-sm sm:text-base">
         Help reunite someone with their lost item. Upload a photo and
         we&apos;ll use AI to match it.
       </p>

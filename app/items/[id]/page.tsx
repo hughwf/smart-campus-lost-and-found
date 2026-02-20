@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -10,7 +10,7 @@ import { ItemWithUser, MatchWithDetails, ExtractedAttributes } from "@/lib/types
 
 function AttributeChip({ label, value }: { label: string; value: string }) {
   return (
-    <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 text-xs font-medium px-2.5 py-1 rounded-full">
+    <span className="inline-flex items-center gap-1 bg-ua-cool-gray text-gray-700 text-xs font-medium px-2.5 py-1 rounded-full">
       <span className="text-gray-400">{label}:</span> {value}
     </span>
   );
@@ -50,25 +50,28 @@ export default function ItemDetailPage() {
 
   const isOwner = session?.userId === item?.user_id;
 
-  useEffect(() => {
-    async function fetchItem() {
-      try {
-        const res = await fetch(`/api/items/${id}`);
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || "Failed to fetch item");
-        }
+  const fetchItem = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/items/${id}`);
+      if (!res.ok) {
         const data = await res.json();
-        setItem(data.item);
-        setMatches(data.matches);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong");
-      } finally {
-        setLoading(false);
+        throw new Error(data.error || "Failed to fetch item");
       }
+      const data = await res.json();
+      setItem(data.item);
+      setMatches(data.matches);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setLoading(false);
     }
-    fetchItem();
   }, [id]);
+
+  useEffect(() => {
+    fetchItem();
+  }, [fetchItem]);
 
   async function handleResolve() {
     if (!confirm("Mark this item as resolved? This means it has been returned to its owner.")) return;
@@ -89,11 +92,11 @@ export default function ItemDetailPage() {
 
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto py-8 px-4">
+      <div className="max-w-3xl mx-auto py-6 sm:py-8 px-4">
         <div className="animate-pulse space-y-4">
           <div className="h-4 bg-gray-200 rounded w-16" />
           <div className="h-8 bg-gray-200 rounded w-2/3" />
-          <div className="h-64 bg-gray-200 rounded-xl" />
+          <div className="h-48 sm:h-64 bg-gray-200 rounded-xl" />
           <div className="h-4 bg-gray-200 rounded w-full" />
           <div className="h-4 bg-gray-200 rounded w-3/4" />
         </div>
@@ -103,12 +106,18 @@ export default function ItemDetailPage() {
 
   if (error || !item) {
     return (
-      <div className="max-w-3xl mx-auto py-8 px-4">
-        <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-block">
+      <div className="max-w-3xl mx-auto py-6 sm:py-8 px-4">
+        <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-flex items-center min-h-[44px]">
           &larr; Back
         </Link>
         <div className="bg-red-50 text-red-700 p-4 rounded-lg">
-          {error || "Item not found"}
+          <p>{error || "Item not found"}</p>
+          <button
+            onClick={fetchItem}
+            className="mt-3 text-sm font-medium px-4 py-2 rounded-lg bg-ua-red text-white hover:bg-ua-chili transition-colors min-h-[44px]"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -116,52 +125,46 @@ export default function ItemDetailPage() {
 
   const isFound = item.type === "found";
   const isLost = item.type === "lost";
-  const typeColor = isFound ? "green" : "red";
 
   return (
-    <div className="max-w-3xl mx-auto py-8 px-4">
-      <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-block">
+    <div className="max-w-3xl mx-auto py-6 sm:py-8 px-4">
+      <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-flex items-center min-h-[44px]">
         &larr; Back
       </Link>
 
       {/* Header */}
-      <div className="flex items-start justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span
               className={`text-xs font-semibold uppercase px-2 py-0.5 rounded-full ${
                 isFound
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
+                  ? "bg-green-50 text-ua-leaf"
+                  : "bg-red-50 text-ua-red"
               }`}
             >
               {item.type}
             </span>
             {item.resolved && (
-              <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+              <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded-full bg-blue-100 text-ua-azurite">
                 Resolved
               </span>
             )}
           </div>
-          <h1 className="text-2xl font-bold">{item.title}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-ua-blue">{item.title}</h1>
         </div>
 
         {isOwner && !item.resolved && (
           <button
             onClick={handleResolve}
             disabled={resolving}
-            className={`shrink-0 text-sm font-medium px-4 py-2 rounded-lg text-white transition-colors ${
+            className={`shrink-0 text-sm font-medium px-4 py-2.5 rounded-lg text-white transition-colors min-h-[44px] w-full sm:w-auto ${
               resolving
                 ? "bg-gray-400 cursor-not-allowed"
-                : `bg-${typeColor}-500 hover:bg-${typeColor}-600`
-            }`}
-            style={{
-              backgroundColor: resolving
-                ? undefined
                 : isFound
-                  ? "#22c55e"
-                  : "#ef4444",
-            }}
+                  ? "bg-ua-leaf hover:bg-ua-river"
+                  : "bg-ua-red hover:bg-ua-chili"
+            }`}
           >
             {resolving ? "Resolving..." : "Mark as Resolved"}
           </button>
@@ -235,7 +238,7 @@ export default function ItemDetailPage() {
 
       {/* Matches section */}
       <div className="border-t pt-6">
-        <h2 className="text-xl font-bold mb-4">
+        <h2 className="text-lg sm:text-xl font-bold mb-4 text-ua-blue">
           {matches.length > 0
             ? `Potential Matches (${matches.length})`
             : "No Matches Yet"}

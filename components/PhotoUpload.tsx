@@ -148,17 +148,17 @@ export default function PhotoUpload({
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           className={`
-            border-2 border-dashed rounded-lg p-8 text-center cursor-pointer
-            transition-colors
+            border-2 border-dashed rounded-lg p-6 sm:p-8 text-center cursor-pointer
+            transition-colors min-h-[120px] flex flex-col items-center justify-center
             ${
               dragOver
-                ? "border-blue-500 bg-blue-50"
+                ? "border-ua-oasis bg-blue-50"
                 : "border-gray-300 hover:border-gray-400 bg-gray-50"
             }
           `}
         >
           <svg
-            className="mx-auto h-12 w-12 text-gray-400"
+            className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -171,7 +171,7 @@ export default function PhotoUpload({
             />
           </svg>
           <p className="mt-2 text-sm font-medium text-gray-700">
-            Drag and drop a photo, or click to upload
+            Tap to take a photo or upload
           </p>
           <p className="mt-1 text-xs text-gray-500">
             JPG, PNG, WebP, or HEIC — will be compressed automatically
@@ -203,7 +203,7 @@ export default function PhotoUpload({
 
           {/* Done badge */}
           {status === "done" && (
-            <div className="absolute top-2 left-2 bg-green-500 text-white text-xs font-medium px-2 py-1 rounded">
+            <div className="absolute top-2 left-2 bg-ua-leaf text-white text-xs font-medium px-2 py-1 rounded">
               AI details generated
             </div>
           )}
@@ -212,7 +212,7 @@ export default function PhotoUpload({
           <button
             type="button"
             onClick={handleRemove}
-            className="absolute top-2 right-2 bg-white/90 hover:bg-white text-gray-700 rounded-full p-1.5 shadow transition-colors"
+            className="absolute top-2 right-2 bg-white/90 hover:bg-white text-gray-700 rounded-full p-2 shadow transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
             aria-label="Remove photo"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
