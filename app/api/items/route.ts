@@ -7,7 +7,7 @@ import {
   getUnresolvedItemsByType,
   createMatch,
 } from "@/lib/db";
-import { matchItems } from "@/lib/gemini";
+import { matchItems } from "@/lib/matching";
 import { ExtractedAttributes } from "@/lib/types";
 
 // POST /api/items - Create a new lost or found item

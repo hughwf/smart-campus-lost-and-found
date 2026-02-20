@@ -94,6 +94,7 @@ export async function POST(request: NextRequest) {
     const result = await generateTitleAndDescription(base64, mimeType, type);
 
     if (!validateGenerateResponse(result)) {
+      console.error("Generate validation failed:", JSON.stringify(result));
       return NextResponse.json(
         { error: "Failed to generate valid item details" },
         { status: 502 }
@@ -102,7 +103,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Generate error:", error);
+    console.error("Generate error:", error instanceof Error ? error.message : error);
+    console.error("Generate error stack:", error instanceof Error ? error.stack : "no stack");
     return NextResponse.json(
       { error: "Failed to generate item details. Please fill in manually." },
       { status: 500 }

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getItemById, getUnresolvedItemsByType, createMatch } from "@/lib/db";
-import { matchItems } from "@/lib/gemini";
+import { matchItems } from "@/lib/matching";
 
 // POST /api/match - Trigger matching for an item against opposite-type candidates
 export async function POST(request: NextRequest) {
