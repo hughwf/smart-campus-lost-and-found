@@ -55,32 +55,56 @@ Generate a title, description, and structured attributes from an item photo usin
 
 ## `POST /api/items`
 
-Create a new lost or found item.
+Create a new lost or found item. Automatically triggers Gemini semantic matching against unresolved items of the opposite type.
 
-**Status:** Not yet implemented.
-
-### Expected Request
+### Request
 
 **Content-Type:** `multipart/form-data`
 
 | Field         | Type   | Required | Description                          |
 |---------------|--------|----------|--------------------------------------|
-| `photo`       | File   | Found: yes, Lost: optional | Item photo |
+| `photo`       | File   | No       | Item photo (uploaded to Vercel Blob) |
 | `title`       | String | Yes      | Item title                           |
 | `description` | String | Yes      | Item description                     |
 | `location`    | String | Yes      | Where the item was lost/found        |
 | `type`        | String | Yes      | `"lost"` or `"found"`               |
+| `extracted`   | String | No       | JSON string of `ExtractedAttributes` |
 | `taken`       | String | Found only | `"true"` or `"false"`             |
 | `reward`      | String | Lost only  | Optional reward description        |
 
-### Expected Flow
+### Response `201 Created`
 
-1. Upload photo to Vercel Blob
-2. Insert item into database
-3. Query unresolved items of the opposite type
-4. Send to Gemini for semantic matching
-5. Insert matches with score > 0.3
-6. Return created item + matches
+```json
+{
+  "item": { "id": "uuid", "type": "lost", "title": "...", "..." : "..." },
+  "matches": [
+    { "id": "uuid", "lost_item_id": "uuid", "found_item_id": "uuid", "score": 0.85, "reasoning": "..." }
+  ]
+}
+```
+
+### Flow
+
+1. Validate required fields
+2. Upload photo to Vercel Blob (if provided)
+3. Parse `extracted` JSON (if provided)
+4. Insert item into database
+5. Query up to 20 unresolved items of the opposite type
+6. Send to Gemini for semantic matching (best-effort — failures are logged but don't block item creation)
+7. Insert matches with score > 0.3
+8. Return created item + matches
+
+### Error Responses
+
+| Status | Body | Description |
+|--------|------|-------------|
+| 400 | `{ "error": "Title is required" }` | Missing title |
+| 400 | `{ "error": "Description is required" }` | Missing description |
+| 400 | `{ "error": "Location is required" }` | Missing location |
+| 400 | `{ "error": "Type must be 'lost' or 'found'" }` | Invalid type |
+| 400 | `{ "error": "File must be an image" }` | Non-image file |
+| 401 | `{ "error": "Unauthorized" }` | Not signed in |
+| 500 | `{ "error": "Failed to create item" }` | Server error |
 
 ---
 
@@ -110,9 +134,36 @@ Mark an item as resolved (reunited with owner).
 
 ## `POST /api/match`
 
-Trigger matching for an item against candidates of the opposite type.
+Trigger matching for an existing item against unresolved candidates of the opposite type. Useful for re-running matching after new items have been reported.
 
-**Status:** Not yet implemented.
+### Request
+
+**Content-Type:** `application/json`
+
+```json
+{ "item_id": "uuid" }
+```
+
+### Response `200 OK`
+
+```json
+{
+  "matches": [
+    { "id": "uuid", "lost_item_id": "uuid", "found_item_id": "uuid", "score": 0.85, "reasoning": "..." }
+  ]
+}
+```
+
+Returns `{ "matches": [] }` when no candidates exist or none score above 0.3.
+
+### Error Responses
+
+| Status | Body | Description |
+|--------|------|-------------|
+| 400 | `{ "error": "item_id is required" }` | Missing or invalid item_id |
+| 401 | `{ "error": "Unauthorized" }` | Not signed in |
+| 404 | `{ "error": "Item not found" }` | No item with that ID |
+| 500 | `{ "error": "Failed to match items" }` | Gemini or database error |
 
 ---
 
