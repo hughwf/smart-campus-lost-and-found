@@ -77,6 +77,8 @@ Authentication uses NextAuth.js with Google OAuth:
 4. `middleware.ts` protects `/report/*` and `/my-items/*` routes, redirecting unauthenticated users.
 5. API routes use `getServerSession(authOptions)` and check `session.userId`.
 
+For full details including Google OAuth setup and environment variables, see [authentication.md](./authentication.md).
+
 ## Database
 
 Three tables in Vercel Postgres:
