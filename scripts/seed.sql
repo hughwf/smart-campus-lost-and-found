@@ -44,3 +44,6 @@ CREATE INDEX IF NOT EXISTS idx_items_user_id ON items(user_id);
 CREATE INDEX IF NOT EXISTS idx_items_type_resolved ON items(type, resolved);
 CREATE INDEX IF NOT EXISTS idx_matches_lost_item_id ON matches(lost_item_id);
 CREATE INDEX IF NOT EXISTS idx_matches_found_item_id ON matches(found_item_id);
+
+-- Unique constraint to prevent duplicate match pairs (enables upsert)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_matches_pair ON matches(lost_item_id, found_item_id);

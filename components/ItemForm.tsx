@@ -113,7 +113,8 @@ export default function ItemForm({ type }: ItemFormProps) {
       }
 
       const data = await res.json();
-      router.push(`/items/${data.item.id}`);
+      const params = data.matchError ? "?matchError=1" : "";
+      router.push(`/items/${data.item.id}${params}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setSubmitting(false);

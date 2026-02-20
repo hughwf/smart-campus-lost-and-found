@@ -102,6 +102,7 @@ export async function POST(request: NextRequest) {
 
     // Trigger matching (best-effort — failures don't block item creation)
     let matches: Awaited<ReturnType<typeof createMatch>>[] = [];
+    let matchError: string | null = null;
     try {
       const oppositeType = item.type === "lost" ? "found" : "lost";
       const candidates = await getUnresolvedItemsByType(oppositeType);
@@ -121,9 +122,10 @@ export async function POST(request: NextRequest) {
       }
     } catch (error) {
       console.error("Matching failed (non-blocking):", error);
+      matchError = "Automatic matching failed. You can try again from the item page.";
     }
 
-    return NextResponse.json({ item, matches }, { status: 201 });
+    return NextResponse.json({ item, matches, matchError }, { status: 201 });
   } catch (error) {
     console.error("Create item error:", error);
     return NextResponse.json(

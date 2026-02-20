@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -41,13 +41,17 @@ function AttributeChips({ extracted }: { extracted: ExtractedAttributes }) {
 
 export default function ItemDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
   const { data: session } = useSession();
+  const hadMatchError = searchParams.get("matchError") === "1";
 
   const [item, setItem] = useState<ItemWithUser | null>(null);
   const [matches, setMatches] = useState<MatchWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [resolving, setResolving] = useState(false);
+  const [rematching, setRematching] = useState(false);
+  const [rematchError, setRematchError] = useState<string | null>(null);
 
   const isOwner = session?.userId === item?.user_id;
 
@@ -73,6 +77,28 @@ export default function ItemDetailPage() {
   useEffect(() => {
     fetchItem();
   }, [fetchItem]);
+
+  async function handleRematch() {
+    setRematching(true);
+    setRematchError(null);
+    try {
+      const res = await fetch("/api/match", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ item_id: id }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Matching failed");
+      }
+      // Re-fetch item to get updated matches
+      await fetchItem();
+    } catch (err) {
+      setRematchError(err instanceof Error ? err.message : "Matching failed");
+    } finally {
+      setRematching(false);
+    }
+  }
 
   async function handleResolve() {
     if (!confirm("Mark this item as resolved? This means it has been returned to its owner.")) return;
@@ -239,18 +265,45 @@ export default function ItemDetailPage() {
 
       {/* Matches section */}
       <div className="border-t pt-6">
-        <h2 className="text-lg sm:text-xl font-bold mb-4 text-ua-blue">
-          {matches.length > 0
-            ? `Potential Matches (${matches.length})`
-            : "No Matches Yet"}
-        </h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+          <h2 className="text-lg sm:text-xl font-bold text-ua-blue">
+            {matches.length > 0
+              ? `Potential Matches (${matches.length})`
+              : "No Matches Yet"}
+          </h2>
+
+          {isOwner && !item.resolved && (
+            <button
+              onClick={handleRematch}
+              disabled={rematching}
+              className="shrink-0 text-sm font-medium px-4 py-2.5 rounded-lg border border-ua-azurite text-ua-azurite hover:bg-ua-azurite hover:text-white transition-colors min-h-[44px] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {rematching ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  Searching...
+                </span>
+              ) : (
+                "Find Matches"
+              )}
+            </button>
+          )}
+        </div>
+
+        {(rematchError || (hadMatchError && matches.length === 0)) && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-4">
+            <p className="text-sm text-amber-700">
+              {rematchError || "Automatic matching didn't run during creation. Tap \"Find Matches\" to search for matches now."}
+            </p>
+          </div>
+        )}
 
         {matches.length === 0 ? (
           <div className="bg-gray-50 rounded-xl p-6 text-center">
             <p className="text-gray-500">
               {isFound
-                ? "No lost items match this found item yet. Matches will appear as people report lost items."
-                : "No found items match your lost item yet. Matches will appear as people report found items."}
+                ? "No lost items match this found item yet. Try \"Find Matches\" or check back as people report lost items."
+                : "No found items match your lost item yet. Try \"Find Matches\" or check back as people report found items."}
             </p>
           </div>
         ) : (

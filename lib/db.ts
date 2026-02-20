@@ -121,12 +121,25 @@ export async function createMatch(
   score: number,
   reasoning: string | null
 ): Promise<Match> {
-  const { rows } = await sql<Match>`
-    INSERT INTO matches (lost_item_id, found_item_id, score, reasoning)
-    VALUES (${lostItemId}, ${foundItemId}, ${score}, ${reasoning})
-    RETURNING *
-  `;
-  return rows[0];
+  // Try upsert first (requires unique index on lost_item_id, found_item_id).
+  // Falls back to plain insert if the index doesn't exist yet.
+  try {
+    const { rows } = await sql<Match>`
+      INSERT INTO matches (lost_item_id, found_item_id, score, reasoning)
+      VALUES (${lostItemId}, ${foundItemId}, ${score}, ${reasoning})
+      ON CONFLICT (lost_item_id, found_item_id) DO UPDATE
+        SET score = ${score}, reasoning = ${reasoning}
+      RETURNING *
+    `;
+    return rows[0];
+  } catch {
+    const { rows } = await sql<Match>`
+      INSERT INTO matches (lost_item_id, found_item_id, score, reasoning)
+      VALUES (${lostItemId}, ${foundItemId}, ${score}, ${reasoning})
+      RETURNING *
+    `;
+    return rows[0];
+  }
 }
 
 export async function getMatchesForItem(
