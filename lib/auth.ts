@@ -22,8 +22,7 @@ export const authOptions: NextAuthOptions = {
           await import("./db")
         ).getUserByEmail(session.user.email);
         if (dbUser) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (session as any).userId = dbUser.id;
+          session.userId = dbUser.id;
         }
       }
       return session;
