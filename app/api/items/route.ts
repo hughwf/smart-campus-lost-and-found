@@ -67,10 +67,14 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      const blob = await put(`items/${Date.now()}-${photo.name}`, photo, {
-        access: "public",
-      });
-      photoUrl = blob.url;
+      try {
+        const blob = await put(`items/${Date.now()}-${photo.name}`, photo, {
+          access: "public",
+        });
+        photoUrl = blob.url;
+      } catch (err) {
+        console.error("Photo upload failed (non-blocking):", err);
+      }
     }
 
     // Parse extracted attributes if provided
